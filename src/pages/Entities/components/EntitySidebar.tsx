@@ -98,8 +98,8 @@ export const EntitySidebar: React.FC<EntitySidebarProps> = ({
   };
 
   return (
-    <aside className="w-full md:w-[380px] lg:w-[400px] h-full flex flex-col bg-white border-r border-slate-200 shrink-0 z-10">
-      <div className="p-3.5 border-b border-slate-200 space-y-2.5 bg-slate-50/60 shrink-0">
+    <aside className="w-full h-[55%] md:h-full md:w-[380px] lg:w-[400px] flex flex-col bg-white border-t md:border-t-0 md:border-r border-slate-200 shrink-0 z-10 overflow-hidden">
+      <div className="p-3 md:p-3.5 border-b border-slate-200 space-y-2 bg-slate-50/60 shrink-0">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
           <input
@@ -227,7 +227,7 @@ export const EntitySidebar: React.FC<EntitySidebarProps> = ({
                   </span>
 
                   <div
-                    className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                     onClick={e => e.stopPropagation()}
                   >
                     <button

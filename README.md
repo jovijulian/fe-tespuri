@@ -1,86 +1,130 @@
-# Spatial Entity Monitoring Web Client (web-puri)
+# Spatial Entity Management — Frontend (`fe-tespuri`)
 
-Frontend application for visualizing and managing geographical entities (IoT telemetry sensors, fleet logistics vehicles, and critical infrastructure facilities).
+Aplikasi web berbasis **React + TypeScript** untuk menampilkan dan mengelola entitas yang memiliki informasi lokasi geografis (Kendaraan, Perangkat IoT, dan Lokasi Fasilitas) di atas peta interaktif.
 
-Adapted from the **Forta Design System** with an industrial dark theme, built with **React 18**, **TypeScript**, **Tailwind CSS**, and **Leaflet (Carto Dark Matter)**.
+## Link Deployment & Repository
 
----
-
-## 1. Features
-
-- **Interactive Map Canvas**:
-  - OpenStreetMap tiles styled via Carto Dark Matter.
-  - Distinct SVG markers per category:
-    - 🔵 **Vehicles** (Logistics vans, freight trucks, patrol units)
-    - 🟢 **IoT Devices** (Air quality nodes, microclimate stations, water level sensors)
-    - 🟡 **Facilities** (Headquarters, distribution centers, maintenance depots)
-  - Live status indicators (Active, Maintenance, Inactive).
-  - Rich interactive popups with direct actions: *View Details*, *Edit*, *Delete*.
-  - **Pick on Map**: Click anywhere on the map to set coordinates directly when creating or updating entities.
-- **Sidebar & Live Filters**:
-  - Real-time search by entity name or code.
-  - Quick category filtering pills (All, Vehicles, IoT Devices, Facilities).
-  - Status dropdown filter (All, Active, Maintenance, Inactive).
-  - Smooth pan/zoom (`map.flyTo`) when clicking any asset in the list.
-- **Entity Management (CRUD)**:
-  - **Create**: Add new entity with coordinate range validation (`[-90, 90]`, `[-180, 180]`).
-  - **Read**: Detail modal displaying telemetry attributes and formatted timestamps.
-  - **Update**: Edit operational status, relocate coordinates, and update telemetry JSON.
-  - **Delete**: Confirmation modal before soft deletion.
-- **Dual-Layer Validation**:
-  - Client-side validation prevents invalid bounds before triggering HTTP requests.
-  - Friendly toast notifications via `react-hot-toast` for backend responses and errors.
+- **Live Frontend App**: https://fe-tespuri.vercel.app/
+- **Repository Frontend**: https://github.com/jovijulian/fe-tespuri
+- **Live Backend API**: https://tes.reeval.tech
+- **Repository Backend**: https://github.com/jovijulian/be-tespuri
 
 ---
 
-## 2. Setup & Execution Guide
+## Status Fitur (Functional Requirements)
 
-### Prerequisites
-- Node.js version 18 or newer
-- npm version 9 or newer
+Seluruh kebutuhan fungsional pada dokumen soal *Take-Home Test* telah selesai dikerjakan (100% selesai):
 
-### Installation
+- [x] **Menampilkan entitas ke dalam map**: Menampilkan titik lokasi di peta interaktif dengan warna/ikon berbeda sesuai kategori, dilengkapi fitur filter (pencarian nama/kode, kategori, status) dan mode *Table View*.
+- [x] **Menambahkan, menghapus, dan update entitas pada map**: Pengguna dapat menambah lokasi baru (baik dengan klik langsung di peta maupun input koordinat manual), mengubah data/posisi, serta menghapus entitas.
+- [x] **Melihat detail entitas pada map**: Klik pada item di daftar maupun pin di peta akan mengarahkan kamera peta ke lokasi tersebut dan membuka panel detail lengkap beserta atribut tambahannya.
+- [x] **Validasi input/data**: Validasi form di sisi frontend (field wajib, rentang latitude `-90..90`, rentang longitude `-180..180`) yang terintegrasi dengan validasi di sisi backend.
+
+---
+
+## Struktur Folder & Arsitektur
+
+Project ini menerapkan **Modular Page Structure** dan **Service Layer Architecture** (`contracts` + `implementations`):
+
+```text
+web-puri/
+├── src/
+│   ├── components/
+│   │   └── ui/
+│   │       ├── Badge.tsx                 # Komponen badge indikator status & kategori
+│   │       ├── Button.tsx                # Komponen tombol standar dengan state loading
+│   │       └── Modal.tsx                 # Komponen dialog modal aksesibel (ESC & backdrop)
+│   ├── lib/
+│   │   └── axios.ts                      # Konfigurasi Axios instance, interceptor, & HTTP helper
+│   ├── services/
+│   │   ├── contracts/
+│   │   │   └── IEntityService.ts         # Interface kontrak metode CRUD entitas
+│   │   ├── implementations/
+│   │   │   └── EntityService.ts          # Implementasi pemanggilan REST API menggunakan Axios
+│   │   └── index.ts                      # Eksport instance singleton service
+│   ├── types/
+│   │   └── entity.ts                     # Definisi tipe data Entity, DTO, dan format response
+│   ├── pages/
+│   │   └── Entities/
+│   │       ├── components/
+│   │       │   ├── EntityHeader.tsx      # Topbar statistik ringkas, switch view, & tombol aksi
+│   │       │   ├── EntitySidebar.tsx     # Panel daftar lokasi, pencarian, & filter kategori/status
+│   │       │   ├── EntityMapCanvas.tsx   # Peta interaktif Leaflet, custom pin, & layer switcher
+│   │       │   ├── EntityFormModal.tsx   # Form tambah/edit lokasi & dynamic attribute builder
+│   │       │   ├── EntityDetailModal.tsx # Panel detail informasi lokasi & atribut tambahan
+│   │       │   ├── EntityTableView.tsx   # Mode tampilan tabel data lengkap
+│   │       │   └── DeleteConfirmModal.tsx# Modal konfirmasi penghapusan entitas
+│   │       ├── hooks/
+│   │       │   └── useEntities.ts        # Custom hook pengelola state, filter, & operasi CRUD
+│   │       └── index.tsx                 # Container utama halaman Spatial Entity Management
+│   ├── App.tsx                           # Root aplikasi & konfigurasi toast notification
+│   ├── main.tsx                          # Entrypoint React DOM
+│   └── index.css                         # Konfigurasi Tailwind CSS v4 & override style Leaflet
+├── .env.example                          # Template variabel environment
+├── package.json                          # Daftar dependency & script npm
+└── README.md                             # Dokumentasi aplikasi frontend
+```
+
+---
+
+## Cara Menjalankan Program
+
+### 1. Instalasi Dependency
+Pastikan **Node.js (v18+)** sudah terpasang, lalu jalankan:
 ```bash
-cd web-puri
 npm install
 ```
 
-### Configuration
-Copy `.env.example` to `.env`:
+### 2. Konfigurasi Environment (`.env`)
+Salin file `.env.example` menjadi `.env`:
 ```bash
 cp .env.example .env
 ```
 
-Target the live deployed backend or your local instance:
+Isi konfigurasi `.env` (arahkan ke backend lokal atau server production):
 ```env
-# Default: Live deployed Cloud Backend
-VITE_API_URL=https://tes.reeval.tech/api/v1
+# Menggunakan backend production
+VITE_API_BASE_URL=https://tes.reeval.tech/api/v1/
 
-# Or Local Backend:
-# VITE_API_URL=http://127.0.0.1:3011/api/v1
+# Atau jika menjalankan backend Go secara lokal:
+# VITE_API_BASE_URL=http://localhost:3011/api/v1/
 ```
 
-### Development Server
+### 3. Menjalankan Server Development
 ```bash
 npm run dev
 ```
-The application will launch on `http://localhost:3000`.
+Aplikasi dapat diakses di `http://localhost:3000`.
 
-### Production Build
+### 4. Build untuk Production
 ```bash
 npm run build
+npm run preview
 ```
-Generates optimized static assets in the `dist/` directory.
 
 ---
 
-## 3. Tech Stack Justification
+## Alasan Pemilihan Library & Tech Stack
 
-| Library | Purpose | Justification |
-| :--- | :--- | :--- |
-| **React 18 + TypeScript** | UI Library | Strong type-safety matching backend DTO schemas, declarative component lifecycle, and high rendering performance. |
-| **Leaflet** | Map Engine | Lightweight (no heavy WebGL overhead), zero mandatory external API keys, smooth marker management, and full tile customization. |
-| **Tailwind CSS** | Styling System | Utility-first architecture with custom dark theme colors inherited from Forta design system (`surface: #1A1D24`, `background: #0F1115`, `primary: #00E676`). |
-| **Lucide React** | Iconography | Clean, consistent, lightweight SVG icons representing vehicles, IoT radios, and facilities. |
-| **Axios** | HTTP Client | Built-in request/response interceptors, centralized base URL management, and predictable error handling. |
-| **React Hot Toast** | Notifications | Immediate, non-blocking feedback on user interactions and backend validation errors. |
+1. **React 18 + TypeScript + Vite**
+   Memberikan proses development dan *build* yang cepat serta *type-safety* yang ketat untuk model data entitas dan koordinat spasial.
+2. **Leaflet (`leaflet`) + OpenStreetMap / Esri Satellite**
+   Dipilih karena ringan, stabil, dan bersifat *open-source* tanpa membutuhkan API Key berbayar (seperti Google Maps/Mapbox), sehingga reviewer dapat langsung menjalankan aplikasi tanpa kendala konfigurasi token.
+3. **Axios + Service Layer Architecture (`contracts` & `implementations`)**
+   Menggunakan HTTP client terpusat (`src/lib/axios.ts`) yang dipadukan dengan pemisahan kontrak interface (`IEntityService`) dan implementasi (`EntityService`). Pendekatan ini membuat komponen UI tetap bersih dan tidak bergantung langsung pada pemanggilan API mentah.
+4. **Tailwind CSS v4 + Lucide Icons**
+   Memudahkan pembuatan antarmuka *GIS Workbench* yang bersih, responsif, dan fungsional tanpa memerlukan library komponen UI yang berat.
+5. **Custom State Management Hook (`useEntities`)**
+   Karena state utama berfokus pada daftar entitas, filter aktif, dan item yang dipilih di peta, penggunaan *custom React hook* (`src/pages/Entities/hooks/useEntities.ts`) jauh lebih ringkas dan minim *boilerplate* dibandingkan Redux, namun tetap terstruktur rapi.
+
+---
+
+## Workflow Penggunaan Agentic AI
+
+Pada pengerjaan proyek ini, **Agentic AI** digunakan sebagai asisten *pair-programming* dengan alur kerja berikut:
+
+1. **Penentuan Arsitektur & Standar Kode oleh Developer**: Developer menetapkan pola HTTP client (`axios.ts`), arsitektur *Service Layer* (`IEntityService` + `EntityService`), serta struktur komponen modular per fitur (`pages/Entities/`).
+2. **Implementasi Komponen & Integrasi Peta oleh AI**: AI membantu membangun komponen peta Leaflet (`EntityMapCanvas`), tabel data, serta form input dinamis yang mengubah pasangan *Label/Value* menjadi format `metadata` JSON secara otomatis agar ramah bagi pengguna non-teknis.
+3. **Review, Debugging & Polish UI/UX**: Developer menguji interaksi langsung di browser, mengarahkan perbaikan *edge-case* pada rendering pin Leaflet saat proses *filtering*, serta men-deploy aplikasi ke Vercel (`https://fe-tespuri.vercel.app/`).
+
+Detail panduan konteks untuk agen AI tersedia pada file [AGENT.md](./AGENT.md).

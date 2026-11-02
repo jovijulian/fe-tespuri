@@ -77,7 +77,13 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
   const metadataEntries = entity.metadata ? Object.entries(entity.metadata) : [];
 
   return (
-    <div className="absolute top-3 right-3 bottom-3 w-full max-w-[360px] z-[450] bg-white border border-slate-300 rounded-lg shadow-xl flex flex-col overflow-hidden">
+    <>
+      <div
+        className="fixed inset-0 bg-slate-900/25 z-[440] md:hidden"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div className="fixed inset-x-3 bottom-3 max-h-[60vh] md:max-h-none md:absolute md:inset-x-auto md:top-3 md:right-3 md:bottom-3 w-auto md:w-full md:max-w-[360px] z-[450] bg-white border border-slate-300 rounded-lg shadow-2xl flex flex-col overflow-hidden">
       <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-start justify-between gap-2 shrink-0">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
@@ -215,5 +221,6 @@ export const EntityDetailModal: React.FC<EntityDetailModalProps> = ({
         </Button>
       </div>
     </div>
+    </>
   );
 };

@@ -59,32 +59,38 @@ export const EntitiesPage: React.FC = () => {
       />
 
       {viewMode === 'split' ? (
-        <div className="flex flex-1 overflow-hidden relative">
-          <EntitySidebar
-            entities={entities}
-            selectedEntity={selectedEntity}
-            onSelectEntity={entity => {
-              setSelectedEntity(entity);
-              setIsDetailOpen(true);
-            }}
-            onEditEntity={entity => {
-              setEntityToEdit(entity);
-              setIsFormOpen(true);
-            }}
-            onDeleteEntity={entity => {
-              setEntityToDelete(entity);
-              setIsDeleteOpen(true);
-            }}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedStatus={selectedStatus}
-            onStatusChange={setSelectedStatus}
-            isLoading={isLoading}
-          />
+        <div className="flex flex-col-reverse md:flex-row flex-1 overflow-hidden relative">
+          {!isPickingLocation && (
+            <EntitySidebar
+              entities={entities}
+              selectedEntity={selectedEntity}
+              onSelectEntity={entity => {
+                setSelectedEntity(entity);
+                setIsDetailOpen(true);
+              }}
+              onEditEntity={entity => {
+                setEntityToEdit(entity);
+                setIsFormOpen(true);
+              }}
+              onDeleteEntity={entity => {
+                setEntityToDelete(entity);
+                setIsDeleteOpen(true);
+              }}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              selectedStatus={selectedStatus}
+              onStatusChange={setSelectedStatus}
+              isLoading={isLoading}
+            />
+          )}
 
-          <main className="flex-1 h-full relative">
+          <main
+            className={`w-full ${
+              isPickingLocation ? 'h-full' : 'h-[45%] min-h-[240px]'
+            } md:h-full md:flex-1 relative shrink-0`}
+          >
             <EntityMapCanvas
               entities={entities}
               selectedEntity={selectedEntity}

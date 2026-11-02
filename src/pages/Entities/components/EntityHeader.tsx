@@ -113,7 +113,8 @@ export const EntityHeader: React.FC<EntityHeaderProps> = ({
           className="gap-1.5"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>Register Entity</span>
+          <span className="hidden sm:inline">Register Entity</span>
+          <span className="sm:hidden">Add</span>
         </Button>
       </div>
     </header>
